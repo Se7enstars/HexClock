@@ -1,6 +1,13 @@
+#NoTrayIcon
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_Icon=icon.ico
+#AutoIt3Wrapper_Res_Description=HexClock
+#AutoIt3Wrapper_Res_Fileversion=1.0.0.2
+#AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
+#AutoIt3Wrapper_Res_LegalCopyright=Se7enstars
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 
 ;ConsoleWrite(_EncryptNum(@HOUR & @MIN & @SEC) & @LF)
-#NoTrayIcon
 
 Global $isTopmost = false
 
