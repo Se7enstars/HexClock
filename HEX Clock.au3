@@ -9,16 +9,18 @@
 
 ;ConsoleWrite(_EncryptNum(@HOUR & @MIN & @SEC) & @LF)
 
+#Include <WindowsConstants.au3>
+
 Global $isTopmost = false
 Global $uiColors[] = [0xDD0000, 0x00DD00, 0x0000DD]
 Global $currentUIColor = 1
 
 $ui_w = 240
-$ui = GUICreate('Se7enstars HEX Time', $ui_w, 70, Default, Default, 0x80880000, 0x00000080); POPUPWINDOW, TOPMOST
+$ui = GUICreate('Se7enstars HEX Time', $ui_w, 70, Default, Default, $WS_POPUP, $WS_EX_TOOLWINDOW)
 GUISetBkColor(0x0)
 
 $time = GUICtrlCreateLabel("Int://", 0, -15, $ui_w, 100, 0x01+0x0200, 0x00100000); CENTER, DRAG_MODE
-GUICtrlSetFont(-1, 48, Default, Default, "Consolas")
+GUICtrlSetFont(-1, 48, Default, Default, "Consolas", 5)
 GUICtrlSetColor(-1, $uiColors[$currentUIColor])
 
 $context = GUICtrlCreateContextMenu($time)
@@ -26,6 +28,7 @@ $topmostContext = GUICtrlCreateMenuItem("&Topmost", $context)
 $changeColorContext = GUICtrlCreateMenuItem("&ChangeUI", $context)
 
 $exitContext = GUICtrlCreateMenuItem("&Exit", $context)
+
 GUISetState()
 
 AdlibRegister("_UpdateTime", 1000)
