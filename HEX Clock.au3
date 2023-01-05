@@ -25,7 +25,8 @@ GUICtrlSetColor(-1, $uiColors[$currentUIColor])
 
 $context = GUICtrlCreateContextMenu($time)
 $topmostContext = GUICtrlCreateMenuItem("&Topmost", $context)
-$changeColorContext = GUICtrlCreateMenuItem("&ChangeUI", $context)
+$changeColorContext = GUICtrlCreateMenuItem("&Change Text Color", $context)
+$changeBkColorContext = GUICtrlCreateMenuItem("&ChangeUI Color", $context)
 
 $exitContext = GUICtrlCreateMenuItem("&Exit", $context)
 
@@ -59,8 +60,24 @@ While  1
 				$currentUIColor += 1
 			EndIf
 			GUICtrlSetColor($time, $uiColors[$currentUIColor])
+		Case $changeBkColorContext
+			AdlibRegister("_SetUIColor", 100)
 	EndSwitch
 WEnd
+
+Func _SetUIColor()
+	Local $sColor
+	If WinActive($ui) Then
+		$mgp = MouseGetPos()
+		$sColor = "0x" & Hex(PixelGetColor($mgp[0], $mgp[1]), 6)
+		ToolTip($sColor)
+		GUISetBkColor($sColor, $ui)
+	Else
+		ToolTip("")
+		AdlibUnRegister("_SetUIColor")
+		WinActivate($ui)
+	EndIf
+EndFunc
 
 Func _UpdateTime()
 	Local $getHexTime = _EncryptNum(@HOUR & "" & @MIN & "" & @SEC)
