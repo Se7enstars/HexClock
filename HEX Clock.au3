@@ -2,7 +2,7 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Res_Description=HexClock_F4
-#AutoIt3Wrapper_Res_Fileversion=1.0.0.8
+#AutoIt3Wrapper_Res_Fileversion=1.0.0.9
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Se7enstars
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
@@ -11,7 +11,7 @@
 
 #include <GUIConstants.au3>
 
-Global $isTopmost = False
+Global $isTopmost = False, $isHexMode = False
 Global $uiColors[] = [0xDD0000, 0x00DD00, 0x0000DD, 0xDDDDDD, 0x111111]
 Global $currentUIColor = 0
 Global $iStartMenu = WinGetPos("[class:Shell_TrayWnd]")
@@ -24,12 +24,13 @@ $ui_YPos = $iStartMenu[1]
 $ui = GUICreate('Se7enstars HEX Time', $ui_Width, $ui_Height, $ui_XPos, $ui_YPos, $WS_POPUP, $WS_EX_TOOLWINDOW)
 GUISetBkColor(0x0)
 
-$time = GUICtrlCreateLabel(@HOUR&":"&@MIN, 0, 0, $ui_Width, $ui_Height, $SS_CENTERIMAGE+$SS_CENTER, $GUI_WS_EX_PARENTDRAG)
+$time = GUICtrlCreateLabel(@HOUR & @MIN & @SEC, 0, 0, $ui_Width, $ui_Height, $SS_CENTERIMAGE+$SS_CENTER, $GUI_WS_EX_PARENTDRAG)
 GUICtrlSetFont(-1, 32, Default, Default, "Consolas", 5)
 GUICtrlSetColor(-1, $uiColors[$currentUIColor])
 
 $context = GUICtrlCreateContextMenu($time)
 $topmostContext = GUICtrlCreateMenuItem("Top&most", $context)
+$hexModeContext = GUICtrlCreateMenuItem("&HexMode", $context)
 $changeColorContext = GUICtrlCreateMenuItem("Change &Text Color", $context)
 $changeBkColorContext = GUICtrlCreateMenuItem("&ChangeUI Color", $context)
 $changeDefBkColorContext = GUICtrlCreateMenuItem("Change &Default UI Color", $context)
@@ -38,6 +39,7 @@ $exitContext = GUICtrlCreateMenuItem("&Exit", $context)
 ;UI_Init...
 _changeDefBkColor()
 _setTopmost()
+_setHexMode()
 GUISetState()
 AdlibRegister("_UpdateTime", 1000)
 
@@ -51,6 +53,8 @@ While  1
 			Exit
 		Case $topmostContext
 			_setTopmost()
+		Case $hexModeContext
+			_setHexMode()
 		Case $changeColorContext
 			If $currentUIColor = UBound($uiColors)-1 Then
 				$currentUIColor = 0
@@ -80,8 +84,12 @@ Func _SetUIColor()
 EndFunc
 
 Func _UpdateTime()
-	Local $getHexTime = _EncryptNum(@HOUR & "" & @MIN & "" & @SEC)
-	GUICtrlSetData($time, $getHexTime)
+	If $isHexMode Then
+		$newTime = _EncryptNum(@HOUR & @MIN & @SEC)
+	Else
+		$newTime = @HOUR & @MIN & @SEC
+	EndIf
+	GUICtrlSetData($time, $newTime)
 	If $isTopmost = True Then 
 		_setTopmost(1)
 	EndIf
@@ -109,6 +117,16 @@ Func _setTopmost($iForceTopmost = 0)
 		EndIf
 	Else
 		WinSetOnTop($ui, '', 1)
+	EndIf
+EndFunc
+
+Func _setHexMode()
+	If $isHexMode Then
+		$isHexMode = False
+		GUICtrlSetState($hexModeContext, 4)
+	Else
+		$isHexMode = True
+		GUICtrlSetState($hexModeContext, 1)
 	EndIf
 EndFunc
 
