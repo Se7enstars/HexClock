@@ -2,7 +2,7 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Res_Description=HexClock_F4
-#AutoIt3Wrapper_Res_Fileversion=1.0.0.9
+#AutoIt3Wrapper_Res_Fileversion=1.0.0.10
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_LegalCopyright=Se7enstars
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
@@ -31,7 +31,9 @@ GUICtrlSetColor(-1, $uiColors[$currentUIColor])
 $context = GUICtrlCreateContextMenu($time)
 $topmostContext = GUICtrlCreateMenuItem("Top&most", $context)
 $hexModeContext = GUICtrlCreateMenuItem("&HexMode", $context)
-$changeColorContext = GUICtrlCreateMenuItem("Change &Text Color", $context)
+$changeColorMenu = GUICtrlCreateMenu("Change &Text Color", $context)
+$changeColorContext = GUICtrlCreateMenuItem("Change &Text Color", $changeColorMenu)
+$selectColorContext = GUICtrlCreateMenuItem("&Select Text Color", $changeColorMenu)
 $changeBkColorContext = GUICtrlCreateMenuItem("&ChangeUI Color", $context)
 $changeDefBkColorContext = GUICtrlCreateMenuItem("Change &Default UI Color", $context)
 $exitContext = GUICtrlCreateMenuItem("&Exit", $context)
@@ -66,6 +68,8 @@ While  1
 			AdlibRegister("_SetUIColor", 100)
 		Case $changeDefBkColorContext
 			_changeDefBkColor()
+		Case $selectColorContext
+			AdlibRegister("_SetTextUIColor", 100)
 	EndSwitch
 WEnd
 
@@ -79,6 +83,20 @@ Func _SetUIColor()
 	Else
 		ToolTip("")
 		AdlibUnRegister("_SetUIColor")
+		WinActivate($ui)
+	EndIf
+EndFunc
+
+Func _SetTextUIColor()
+	Local $sColor
+	If WinActive($ui) Then
+		$mgp = MouseGetPos()
+		$sColor = "0x" & Hex(PixelGetColor($mgp[0], $mgp[1]), 6)
+		ToolTip($sColor)
+		GUICtrlSetColor($time, $sColor)
+	Else
+		ToolTip("")
+		AdlibUnRegister("_SetTextUIColor")
 		WinActivate($ui)
 	EndIf
 EndFunc
